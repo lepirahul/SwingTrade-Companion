@@ -65,10 +65,6 @@ After deployment, you'll get a public URL like:
 - `https://your-app.railway.app` (Railway)
 - `https://your-app.onrender.com` (Render)
 
-**📋 Detailed Deployment Guide:** See [DEPLOYMENT.md](DEPLOYMENT.md)
-
-**🔒 Security Information:** See [SECURITY.md](SECURITY.md)
-
 Access this URL from any device, anywhere!
 
 #### Web Interface Features:
