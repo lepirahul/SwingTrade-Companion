@@ -43,44 +43,31 @@ Then access at: http://localhost:5000
 
 Deploy to cloud for access from anywhere on any device.
 
-**Option A: Railway (Recommended - Free Tier Available)**
+**Quick Start - Railway (Recommended):**
 
-1. Create account at [railway.app](https://railway.app)
-2. Install Railway CLI (optional, or use web interface):
-   ```bash
-   npm i -g @railway/cli
-   ```
-3. Deploy:
-   ```bash
-   railway login
-   railway init
-   railway up
-   ```
-4. Or use Railway's GitHub integration:
-   - Push code to GitHub
-   - Connect GitHub repo in Railway dashboard
-   - Railway auto-deploys
+1. Go to [railway.app](https://railway.app) and sign up with GitHub
+2. Click "New Project" → "Deploy from GitHub repo"
+3. Select `lepirahul/SwingTrade-Companion`
+4. Railway auto-deploys (takes 2-3 minutes)
+5. Get your URL from the dashboard
 
-**Option B: Render (Free Tier Available)**
+**Quick Start - Render:**
 
-1. Create account at [render.com](https://render.com)
-2. Connect your GitHub repository
-3. Create new "Web Service"
+1. Go to [render.com](https://render.com) and sign up with GitHub
+2. Click "New +" → "Web Service"
+3. Connect repository: `SwingTrade-Companion`
 4. Settings:
    - Build Command: `pip install -r requirements.txt`
    - Start Command: `python app.py`
-5. Deploy
-
-**Option C: Heroku (Requires Credit Card for Free Tier)**
-
-1. Install Heroku CLI
-2. Login: `heroku login`
-3. Create app: `heroku create your-app-name`
-4. Deploy: `git push heroku main`
+5. Click "Create Web Service"
 
 After deployment, you'll get a public URL like:
-- `https://your-app.railway.app`
-- `https://your-app.onrender.com`
+- `https://your-app.railway.app` (Railway)
+- `https://your-app.onrender.com` (Render)
+
+**📋 Detailed Deployment Guide:** See [DEPLOYMENT.md](DEPLOYMENT.md)
+
+**🔒 Security Information:** See [SECURITY.md](SECURITY.md)
 
 Access this URL from any device, anywhere!
 
