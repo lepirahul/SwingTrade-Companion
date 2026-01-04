@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwingTrade Companion - Scanner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+        
+        .scan-options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .scan-btn {
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            color: white;
+        }
+        
+        .scan-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-test {
+            background: #48bb78;
+        }
+        
+        .btn-medium {
+            background: #4299e1;
+        }
+        
+        .btn-full {
+            background: #ed8936;
+        }
+        
+        .btn-stop {
+            background: #f56565;
+        }
+        
+        .scan-btn:not(:disabled):active {
+            transform: scale(0.98);
+        }
+        
+        .status {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .status.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .results.active {
+            display: block;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .results-count {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .results-table th {
+            background: #edf2f7;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+        }
+        
+        .results-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .symbol {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .price {
+            color: #2d3748;
+        }
+        
+        .gain {
+            color: #48bb78;
+            font-weight: 600;
+        }
+        
+        .volume-mult {
+            color: #4299e1;
+            font-weight: 600;
+        }
+        
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #718096;
+        }
+        
+        .info-text {
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 SwingTrade Companion</h1>
+            <p>Momentum Scanner for Nifty Smallcap 250</p>
+        </div>
+        
+        <div class="content">
+            <div id="error" class="error" style="display: none;"></div>
+            
+            <div class="scan-options">
+                <button class="scan-btn btn-test" onclick="startScan('test')" id="btn-test">
+                    🧪 Test Scan (10 stocks)
+                </button>
+                <button class="scan-btn btn-medium" onclick="startScan('medium')" id="btn-medium">
+                    ⚡ Medium Scan (50 stocks)
+                </button>
+                <button class="scan-btn btn-full" onclick="startScan('full')" id="btn-full">
+                    🚀 Full Scan (249 stocks)
+                </button>
+                <button class="scan-btn btn-stop" onclick="stopScan()" id="btn-stop" style="display: none;">
+                    ⏹ Stop Scan
+                </button>
+            </div>
+            
+            <div id="status" class="status">
+                <div style="font-weight: 600; margin-bottom: 10px;">Scan Progress</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
+                </div>
+                <div style="text-align: center; color: #718096; font-size: 14px;">
+                    <span id="progress-text">Waiting...</span>
+                </div>
+            </div>
+            
+            <div id="results" class="results">
+                <div class="results-header">
+                    <div class="results-count" id="results-count">0 Results</div>
+                    <div style="color: #718096; font-size: 14px;" id="elapsed-time"></div>
+                </div>
+                
+                <div id="results-content">
+                    <div class="no-results">No results to display</div>
+                </div>
+            </div>
+            
+            <div class="info-text">
+                <strong>Criteria:</strong> Volume ≥ 2.5x average, Price gain ≥ 1.0%<br>
+                Target: Stocks with 5-10% weekly move potential
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let statusInterval = null;
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function startScan(type) {
+            // Disable all scan buttons
+            document.getElementById('btn-test').disabled = true;
+            document.getElementById('btn-medium').disabled = true;
+            document.getElementById('btn-full').disabled = true;
+            document.getElementById('btn-stop').style.display = 'block';
+            
+            // Show status
+            document.getElementById('status').classList.add('active');
+            document.getElementById('results').classList.remove('active');
+            
+            fetch('/api/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ type: type })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showError(data.error);
+                    resetButtons();
+                } else {
+                    // Start polling for status
+                    statusInterval = setInterval(checkStatus, 1000);
+                }
+            })
+            .catch(error => {
+                showError('Error starting scan: ' + error.message);
+                resetButtons();
+            });
+        }
+        
+        function stopScan() {
+            fetch('/api/stop', {
+                method: 'POST'
+            })
+            .then(() => {
+                if (statusInterval) {
+                    clearInterval(statusInterval);
+                    statusInterval = null;
+                }
+                resetButtons();
+            });
+        }
+        
+        function checkStatus() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    updateStatus(data);
+                    
+                    if (!data.running && !data.error) {
+                        // Scan completed
+                        if (statusInterval) {
+                            clearInterval(statusInterval);
+                            statusInterval = null;
+                        }
+                        resetButtons();
+                        displayResults(data.results, data.elapsed);
+                    } else if (data.error) {
+                        showError(data.error);
+                        if (statusInterval) {
+                            clearInterval(statusInterval);
+                            statusInterval = null;
+                        }
+                        resetButtons();
+                    }
+                })
+                .catch(error => {
+                    showError('Error checking status: ' + error.message);
+                });
+        }
+        
+        function updateStatus(data) {
+            const progress = data.total > 0 ? (data.progress / data.total) * 100 : 0;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('progress-fill').textContent = 
+                data.running ? `${data.progress}/${data.total} (${Math.round(progress)}%)` : 'Complete';
+            document.getElementById('progress-text').textContent = 
+                data.running ? `Scanning... ${data.progress} of ${data.total} stocks` : 'Scan complete!';
+        }
+        
+        function displayResults(results, elapsed) {
+            const resultsDiv = document.getElementById('results');
+            const resultsContent = document.getElementById('results-content');
+            const resultsCount = document.getElementById('results-count');
+            
+            resultsDiv.classList.add('active');
+            resultsCount.textContent = `${results.length} Result${results.length !== 1 ? 's' : ''}`;
+            
+            if (elapsed) {
+                document.getElementById('elapsed-time').textContent = `Time: ${elapsed}s`;
+            }
+            
+            if (results.length === 0) {
+                resultsContent.innerHTML = '<div class="no-results">No Volume Shocker stocks found</div>';
+                return;
+            }
+            
+            let html = '<table class="results-table"><thead><tr>';
+            html += '<th>Symbol</th><th>Price</th><th>Gain %</th><th>Vol Mult</th>';
+            html += '</tr></thead><tbody>';
+            
+            results.forEach(stock => {
+                html += '<tr>';
+                html += `<td class="symbol">${stock.symbol}</td>`;
+                html += `<td class="price">₹${stock.price.toFixed(2)}</td>`;
+                html += `<td class="gain">${stock.price_gain_pct.toFixed(2)}%</td>`;
+                html += `<td class="volume-mult">${stock.volume_multiplier.toFixed(2)}x</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            resultsContent.innerHTML = html;
+        }
+        
+        function resetButtons() {
+            document.getElementById('btn-test').disabled = false;
+            document.getElementById('btn-medium').disabled = false;
+            document.getElementById('btn-full').disabled = false;
+            document.getElementById('btn-stop').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+

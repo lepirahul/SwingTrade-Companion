@@ -1,0 +1,57 @@
+CODING RULES FOR ADVANCED TRADING  PROJECT
+==============================================
+
+CORE PRINCIPLES:
+1. MANDATORY CODE REVIEW - ALL code modifications require user review and approval BEFORE implementation, even if it's a single line of code. Explain changes first, get approval, then implement.
+2. NO ANALYSIS DOCUMENTS - Do NOT create analysis documents, proposals, or implementation plans. Avoid creating .md files for analysis. Focus on direct code changes only.
+3. MINIMAL CHANGES ONLY - Fix bugs, make small improvements. NO refactoring or architectural changes.
+4. PRESERVE EXISTING PATTERNS - Match code style, logging format, error handling exactly.
+5. BUG FIXES & IMPROVEMENTS ONLY - Fix actual bugs, add missing error handling, improve logging. NO new features unless requested.
+6. MAINTAIN FUNCTIONALITY - Don't break existing features. 
+
+BEFORE MAKING CHANGES:
+- EXPLAIN changes to user and GET APPROVAL first - Even single line changes require review
+- Read the entire function/module first
+- Identify the exact problem and minimal fix
+- Check for side effects on other code
+- Verify LIVE/PAPER mode consistency
+
+CODE MODIFICATION RULES:
+
+
+NEVER MODIFY WITHOUT EXPLICIT REQUEST:
+- Architecture, class structure, service dependencies
+- Working logic 
+
+
+SAFE TO MODIFY:
+- Bug fixes (incorrect validation, missing null checks, wrong variables)
+- Logging improvements (add missing logs, improve messages)
+- Error handling (add try-catch, improve messages)
+- Code consistency 
+- Minor improvements (typos, clarity, comments)
+
+
+
+REVIEW CHECKLIST:
+- Change is minimal (< 50 lines)
+- Follows existing patterns
+- Fixes specific bug or adds requested improvement
+- Doesn't break existing functionality
+
+- Logging adequate
+- Error handling appropriate
+- No architectural changes
+- No unnecessary refactoring
+
+GOLDEN RULE: Make the smallest possible change that fixes the specific issue, following existing patterns exactly, without modifying anything else. When in doubt, preserve existing behavior.
+
+CODE REVIEW RULES:
+- Review ONE file at a time, not multiple files simultaneously
+- Focus on the specific file requested for review
+- Complete review of current file before moving to next file
+- Provide detailed feedback on: bugs, code quality, adherence to project rules, potential issues
+- When reviewing multiple files, ask user which file to review next after completing current file
+- Don't review entire codebase unless explicitly requested
+- For each file, check: logic correctness, error handling, logging,  pattern adherence
+
